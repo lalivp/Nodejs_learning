@@ -24,7 +24,7 @@ const regUser = (req, res) => {
 
                 const student = new studentCollection(req.body);
                 student.save(req.body).then((result) => {
-                    res.send({message:"insert success"});
+                    res.status(201).send({message:"insert success"});
                 }).catch((error) => {
                     console.log(error)
                     res.send(error);
