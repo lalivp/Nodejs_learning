@@ -3,6 +3,8 @@ const { validationCheck } = require('./middleware.js');
 const { getUser, regUser } = require('../Controller/userController');
 const app = express.Router();
 
+
+
 app.get('/', (req, res) => {
   res.send("Hello World");
 })

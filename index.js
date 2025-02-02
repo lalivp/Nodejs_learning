@@ -7,9 +7,11 @@ const mongoose = require('mongoose');
 
 //body-parsing
 require('body-parser-xml')(bodyParser);
-require("./Config")
 app.use(express.json());
 app.use(bodyParser.xml());
+
+//env
+require("./Config")
 
 //Mongo connection
 mongoose.connect('mongodb://localhost:27017/test').then((result)=>{
@@ -18,14 +20,8 @@ mongoose.connect('mongodb://localhost:27017/test').then((result)=>{
     console.log(error)
 });
 
-// app.get('/', (req, res) => {
-//   res.send("Hello World");
-// })
-// app.post('/register', (req, res) => {
-//     res.send({message:"User registration detail", data:req.body});
-//   })
 
-app.use(require('./Routes/userRoutes')) // C
+app.use(require('./Routes/userRoutes')) // Custom middleware
 
 app.listen(environt_var.port, () => {
     console.log(`Example app listening on port ${environt_var.port}`)
