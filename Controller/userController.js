@@ -49,16 +49,20 @@ const regUser = (req, res) => {
     })
 }
 
-    // studentCollection.save(req.body).then((result) => {
-    //     console.log(result)
-    //     // res.send(result)
-    // }).catch((error) => {
-    // });
-    //   console.log("controller");
-    // res.send("validation success")
-    // Business find, delete
+const loginUser = (req, res) =>{
+    studentCollection.find({email:req.body.email}).then((data) =>{
+        if(data.length > 0){
+            res.send(data[0])
+        } else {
+            res.status(404).send({message:"email not found"})
+        }
+    }).catch ((error) =>{
+        console.log(error);
+    })
+}
 
 module.exports = {
     getUser,
-    regUser
+    regUser,
+    loginUser
 }
