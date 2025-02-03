@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const { studentCollection } = require('../Models/dbschema');
-
+const async = require("async");
 
 const getUser = (req, res) => {
 
@@ -9,10 +9,19 @@ const getUser = (req, res) => {
 }
 
 const regUser = (req, res) => {
-    studentCollection.find({email:req.body.email}).then((data)=>{
-        if(data.length > 0){
-            res.status(409).send({message:"email already exist"});
-        }else{
+    async.waterfall([
+        (callback)=>{
+            studentCollection.find({email:req.body.email}).then((data)=>{
+                if(data.length > 0){
+                    res.status(409).send({message:"email already exist"});
+                }else{
+                    callback(null, true)
+                }
+            }).catch((error)=>{
+                console.log(error);
+            });
+        },
+        (arg1, callback) =>{
             let { password } = req.body;
             let hassPassword;
              bcrypt.hash(password, 10, function (err, hash) {
@@ -24,16 +33,20 @@ const regUser = (req, res) => {
 
                 const student = new studentCollection(req.body);
                 student.save(req.body).then((result) => {
-                    res.status(201).send({message:"insert success"});
+                    callback(null,{message:"insert success"})
                 }).catch((error) => {
-                    console.log(error)
-                    res.send(error);
+                    callback(error);
                 });
             }
          });
         }
+    ],(err, result)=>{
+        if(err){
+            res.send(err);
+        }else{
+            res.send(result);
+        }
     })
-    
 }
 
     // studentCollection.save(req.body).then((result) => {
