@@ -1,6 +1,7 @@
 const Joi = require("joi");
 const { getSchema } = require("../Models/schema");
 const jwt = require('jsonwebtoken');
+const {secretKey} = require('../Config/index');
 
 const validationCheck = (req,res,next)=>{
     let reqUrl = req.originalUrl;
@@ -16,9 +17,9 @@ const validationCheck = (req,res,next)=>{
 
 const tokenVerify = (req, res, next) =>{
     let token = req?.headers?.authorization;
-    jwt.verify (token, "secretkey",(err,result) =>{
+    jwt.verify (token, secretKey, (err,result) =>{
         if(err){
-            console.log(JSON.stringify(err))
+            res.send(JSON.stringify(err.message));
         }else{
             next()
         }

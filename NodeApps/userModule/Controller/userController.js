@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const { studentCollection } = require('../Models/dbschema');
 const async = require("async");
 const jwt = require('jsonwebtoken');
+const {secretKey} = require('../Config/index')
 
 const getUser = (req, res) => {
 
@@ -77,7 +78,7 @@ const loginUser = (req, res) =>{
         },
         //3. generating the JWT token
         (arg2,callback)=>{
-            let token = jwt.sign({email:arg2.email}, "secretkey", {expiresIn:"1h"});
+            let token = jwt.sign({email:arg2.email}, secretKey, {expiresIn:"1h"});
             callback (null, token);
         }
     ],(err, result)=>{
