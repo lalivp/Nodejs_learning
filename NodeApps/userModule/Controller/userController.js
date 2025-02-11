@@ -5,8 +5,12 @@ const jwt = require('jsonwebtoken');
 const {secretKey} = require('../Config/index')
 
 const getUser = (req, res) => {
-
-    res.send('Hello World!');
+    // res.send(result);
+    studentCollection.find({email:req.body.id},{password:0}).then((data)=>{
+        res.send({status:true, data});
+    }).catch((error)=>{
+        res.status(500).send({status:false, message:"Internal Server error"})
+    })
 }
 
 const regUser = (req, res) => {
@@ -92,8 +96,15 @@ const loginUser = (req, res) =>{
     })
 }
 
+const updateUser = (req, res) =>{
+    let id = req.headers;
+    console.log("controler here");
+    console.log(id);
+}
+
 module.exports = {
     getUser,
     regUser,
-    loginUser
+    loginUser,
+    updateUser
 }
