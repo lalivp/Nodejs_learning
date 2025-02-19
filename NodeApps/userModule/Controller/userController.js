@@ -2,7 +2,24 @@ const bcrypt = require('bcryptjs');
 const { studentCollection } = require('../Models/dbschema');
 const async = require("async");
 const jwt = require('jsonwebtoken');
-const {secretKey} = require('../Config/index')
+const {secretKey} = require('../Config/index');
+const bunyan = require('bunyan');
+const path = require("path");
+
+//logging
+const log =  bunyan.createLogger({
+    name: "UserModule",
+    streams: [
+        {
+            level: "info", // Log level
+            path: path.join(__dirname, "logs/app.log"), // Log file path
+        },
+        {
+            level: "error",
+            path: path.join(__dirname, "logs/error.log"),
+        },
+    ],
+});
 
 const getUser = (req, res) => {
     let {id} = req.headers;
@@ -36,21 +53,23 @@ const regUser = (req, res) => {
             } else {
                 hassPassword = hash;
                 req.body.password = hassPassword;
-
-                const student = new studentCollection(req.body);
-                student.save(req.body).then((result) => {
-                    callback(null,{message:"insert success"})
-                }).catch((error) => {
-                    callback(error);
-                });
+                callback(null, true);
             }
          });
+        }, (arg2, callback) =>{
+            const student = new studentCollection(req.body);
+            student.save(req.body).then((result) => {
+                callback(null,{message:"insert success"})
+            }).catch((error) => {
+                callback(error);
+            });
         }
     ],(err, result)=>{
         if(err){
             res.send(err);
         }else{
-            res.send(result);
+            res.status(201).send(result);
+            log.info(req.body);
         }
     })
 }
