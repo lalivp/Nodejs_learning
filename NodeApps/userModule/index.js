@@ -3,12 +3,15 @@ const app = express();
 var bodyParser = require('body-parser');
 const environt_var = require("./Config/index");
 const mongoose = require('mongoose');
+const cors = require('cors');
 
 
 //body-parsing
 require('body-parser-xml')(bodyParser);
 app.use(express.json());
 app.use(bodyParser.xml());
+
+app.use(cors());
 
 //env
 require("./Config")

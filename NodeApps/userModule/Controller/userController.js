@@ -5,8 +5,9 @@ const jwt = require('jsonwebtoken');
 const {secretKey} = require('../Config/index')
 
 const getUser = (req, res) => {
-    // res.send(result);
-    studentCollection.find({email:req.body.id},{password:0}).then((data)=>{
+    let {id} = req.headers;
+    // console.log(id);
+    studentCollection.find({_id:id},{password:0}).then((data)=>{
         res.send({status:true, data});
     }).catch((error)=>{
         res.status(500).send({status:false, message:"Internal Server error"})
@@ -82,7 +83,7 @@ const loginUser = (req, res) =>{
         },
         //3. generating the JWT token
         (arg2,callback)=>{
-            let token = jwt.sign({email:arg2.email}, secretKey, {expiresIn:"1h"});
+            let token = jwt.sign({id:arg2._id}, secretKey, {expiresIn:"1h"});
             callback (null, token);
         }
     ],(err, result)=>{
@@ -97,14 +98,27 @@ const loginUser = (req, res) =>{
 }
 
 const updateUser = (req, res) =>{
-    let id = req.headers;
-    console.log("controler here");
-    console.log(id);
+    let {id} = req.headers;
+    console.log(req.body);
+    studentCollection.updateOne({_id:id}, {$set: {fullName:req.body.fullName}}).then((result)=>{
+        res.status(200).send({status: true, message:"Updated"});
+    }).catch((error)=>{
+        res.status(500).send({status: false, message:"Internal Server Error"});
+    })
+}
+const deleteUser= (req, res) =>{
+    let {id} = req.headers;
+    studentCollection.deleteOne({_id:id}).then((result)=>{
+        res.status(200).send({status: true, message:"Deleted"})
+    }).catch((error)=>{
+        res.status(500).send({status: false, message:"Internal Server Error"});
+    })
 }
 
 module.exports = {
     getUser,
     regUser,
     loginUser,
-    updateUser
+    updateUser,
+    deleteUser
 }

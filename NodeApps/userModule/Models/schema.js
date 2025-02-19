@@ -23,8 +23,7 @@ const loginDetailsSchema ={
 }
 
 const getUserDetailsSchema ={
-    id: Joi.string()
-    .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }).required(),
+    id: Joi.string().required(),
 }
 const updateUserDetailsSchema ={
     fullName: Joi.string()
@@ -35,7 +34,9 @@ const updateUserDetailsSchema ={
     email: Joi.string()
         .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } }).required(),
 }
-
+const deleteUserDetailsSchema ={
+    id: Joi.string().required(),
+}
 const getSchema = (url) => {
     switch (url) {
         case "/register":
@@ -46,6 +47,8 @@ const getSchema = (url) => {
             return getUserDetailsSchema;
         case "/updateuser":
             return updateUserDetailsSchema;
+        case "/deleteUser":
+            return deleteUserDetailsSchema;
         default:
             return {}
     }

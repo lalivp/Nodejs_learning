@@ -18,9 +18,11 @@ const validationCheck = (req,res,next)=>{
 }
 
 const tokenVerify = (req, res, next) =>{
+    let id;
     async.waterfall([
         (callback)=>{
             let token = req?.headers?.authorization;
+            //console.log(token);
             jwt.verify (token, secretKey, (err, result) =>{
             if(err){
                 res.status(401).send({status:false, message:"Token Expired"});
@@ -30,13 +32,14 @@ const tokenVerify = (req, res, next) =>{
              })
         },
         (result, callback)=>{
-        //    res.send(result);
-            let id = result?.email;
-            studentCollection.find({email:id}).then((data)=>{
+            //console.log(result);
+            id = result?.id;
+            //console.log(id);
+            studentCollection.find({_id:id}).then((data)=>{
                 if(data?.length >0){
                     callback(null, data);
                 }else{
-                    res.send({status:false, message:"Tokn expired"})
+                    res.send({status:false, message:"Token expired"})
                 }
             })
         } 
@@ -44,6 +47,7 @@ const tokenVerify = (req, res, next) =>{
         if(err){
             res.status(401).send({status:false, message:"Token Expired"})
         }else{
+            req.headers.id = id;
             next();
         }
     })
